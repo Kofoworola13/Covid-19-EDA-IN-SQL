@@ -3,10 +3,10 @@ COVID 19 EXPLORATION DATA ANALYSIS
 Skills Covered: Aggregate Functions, 
                 Convertion of Data Types,
                 Joins,
-				Windows Functions, 
+	        Windows Functions, 
                 Subqueries,
                 CTEs, 
-			    Temp Tables 			    
+		Temp Tables 			    
 */
 
 -- Overiew of the two data tables
@@ -20,11 +20,11 @@ select *
 -- Select the main columns needed
 select Location
      , continent
-	 , date
+     , date
      , total_cases
-	 , new_cases
-	 , total_deaths
-	 , population
+     , new_cases
+     , total_deaths
+     , population
   from PortfolioProject..CovidDeaths
  order by 1, 2
 
@@ -33,8 +33,8 @@ select Location
 -- Shows the percentage of population infected with Covid in specific locations
 select Location
      , date
-	 , Population
-	 , total_cases
+     , Population
+     , total_cases
      , round((total_cases/population)*100, 1) as percent_of_population_infected
   from PortfolioProject..CovidDeaths
  where Location = 'Nigeria' 
@@ -46,8 +46,8 @@ select Location
 -- Shows the death rate of Covid patients in specific locations 
 select Location
      , date
-	 , total_cases
-	 , total_deaths 
+     , total_cases
+     , total_deaths 
      , round((total_deaths/total_cases) * 100, 1) as death_likelihood
   from PortfolioProject..CovidDeaths
  where location = 'Nigeria' 
@@ -90,7 +90,7 @@ select location
 select location
      , population
      , MAX(cast(Total_deaths as int)) as total_death_count
-	 , round(MAX((cast(Total_deaths as int)/population))*100, 6) as percent_of_population_death
+     , round(MAX((cast(Total_deaths as int)/population))*100, 6) as percent_of_population_death
   from PortfolioProject..CovidDeaths
  where continent is not null
  group by location, population
@@ -102,7 +102,7 @@ select location
 select continent
      , sum(population) as total_population
      , sum(infection_count) as total_infection_count
-	 , round((sum(infection_count) / sum(population)) * 100, 2) as total_infection_rate
+     , round((sum(infection_count) / sum(population)) * 100, 2) as total_infection_rate
   from
        (select continent, location, population
              , max(total_cases) as infection_count
@@ -118,7 +118,7 @@ select continent
 select continent
      , sum(population) as total_population
      , sum(death_count) as total_death_count
-	 , round((sum(death_count) / sum(population)) * 100, 5) as total_death_rate
+     , round((sum(death_count) / sum(population)) * 100, 5) as total_death_rate
   from
        (select continent, location, population
              , max(cast(Total_deaths as int)) as death_count
@@ -133,7 +133,7 @@ select continent
 -- Show worldwide records by date
 select date
      , SUM(new_cases) as total_cases
-	 , SUM(cast(new_deaths as int)) as total_deaths 
+     , SUM(cast(new_deaths as int)) as total_deaths 
      , round(SUM(cast(new_deaths as int)) / SUM(New_Cases) * 100, 1)  as death_rate
   from PortfolioProject..CovidDeaths
  where continent is not null
@@ -145,7 +145,7 @@ select date
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
   from PortfolioProject..CovidDeaths as dea
   join PortfolioProject..CovidVaccinations as vac
-	on dea.location = vac.location
+    on dea.location = vac.location
    and dea.date = vac.date
  where dea.continent is not null 
    and dea.location = 'united states'
@@ -155,11 +155,11 @@ select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinatio
 -- Show number of population that has recieved at least one Covid Vaccine
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
      , sum(convert(int, vac.new_vaccinations)) over (partition by dea.Location 
-	                                                     order by dea.location, dea.Date) 
-											    as total_vaccinated
+	                                                 order by dea.location, dea.Date) 
+					         as total_vaccinated
   from PortfolioProject..CovidDeaths as dea
   join PortfolioProject..CovidVaccinations as vac
-	on dea.location = vac.location
+    on dea.location = vac.location
    and dea.date = vac.date
  where dea.continent is not null
    and dea.location = 'united states'
@@ -173,11 +173,11 @@ as
 (
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
      , sum(convert(int, vac.new_vaccinations)) over (partition by dea.Location 
-	                                                     order by dea.location, dea.Date) 
-											    as total_vaccinated
+	                                                 order by dea.location, dea.Date) 
+					         as total_vaccinated
   from PortfolioProject..CovidDeaths as dea
   join PortfolioProject..CovidVaccinations as vac
-	on dea.location = vac.location
+    on dea.location = vac.location
    and dea.date = vac.date
  where dea.continent is not null
    --and dea.location = 'united states'
@@ -203,11 +203,11 @@ total_vaccinated numeric
 insert into #PercentPopulationVaccinated
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
      , sum(convert(int, vac.new_vaccinations)) over (partition by dea.Location 
-	                                                     order by dea.location, dea.Date) 
-											    as total_vaccinated
+	                                                 order by dea.location, dea.Date) 
+                                                 as total_vaccinated
   from PortfolioProject..CovidDeaths as dea
   join PortfolioProject..CovidVaccinations as vac
-	on dea.location = vac.location
+    on dea.location = vac.location
    and dea.date = vac.date
  where dea.continent is not null
    --and dea.location = 'united states'
